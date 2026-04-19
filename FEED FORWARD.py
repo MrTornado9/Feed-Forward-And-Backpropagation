@@ -1,10 +1,10 @@
 import numpy as np
 
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+def tanh(x):
+    return np.tanh(x)
 
-def sigmoid_derivative(x):
-    return x * (1 - x)
+def tanh_derivative(x):
+    return 1 - x**2
 
 inputs = np.array([[0,0], [0,1], [1,0], [1,1]])
 expected_output = np.array([[0], [1], [1], [0]])
@@ -23,29 +23,29 @@ output_bias = np.random.uniform(size=(1, output_neurons))
 epochs = 10000
 learning_rate = 0.1
 
-for epoch in range(epochs):
+for _ in range(epochs):
     # -------------------------
     # 1. Feed Forward
     # -------------------------
     hidden_layer_activation = np.dot(inputs, hidden_weights) + hidden_bias
-    hidden_layer_output = sigmoid(hidden_layer_activation)
+    hidden_layer_output = tanh(hidden_layer_activation)
 
     output_layer_activation = np.dot(hidden_layer_output, output_weights) + output_bias
-    predicted_output = sigmoid(output_layer_activation)
+    predicted_output = tanh(output_layer_activation)
 
     # -------------------------
     # 2. Backpropagation
     # -------------------------
     error = expected_output - predicted_output
-    d_predicted_output = error * sigmoid_derivative(predicted_output)
+    d_predicted_output = error * tanh_derivative(predicted_output)
 
     error_hidden_layer = d_predicted_output.dot(output_weights.T)
-    d_hidden_layer = error_hidden_layer * sigmoid_derivative(hidden_layer_output)
+    d_hidden_layer = error_hidden_layer * tanh_derivative(hidden_layer_output)
 
-    
+
     output_weights += hidden_layer_output.T.dot(d_predicted_output) * learning_rate
     output_bias += np.sum(d_predicted_output, axis=0, keepdims=True) * learning_rate
-    
+
     hidden_weights += inputs.T.dot(d_hidden_layer) * learning_rate
     hidden_bias += np.sum(d_hidden_layer, axis=0, keepdims=True) * learning_rate
 
